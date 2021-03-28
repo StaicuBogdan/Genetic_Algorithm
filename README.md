@@ -2,7 +2,7 @@
 Algoritm genetic ce codifica niste "cromozomi", adica numere in baza doi, pe baza unei ecuatii de gradul 2 si cauta intr-un numar de generatii valoarea maxima pe care o poate lua functia, f(x) reprezentand fitness-ul fiecarui cromozom.
 
 Populatia initiala
-1: 1111110000000111001111 x= 1.953457 f= 0.13746274915099987
+1: 1111110000000111001111 x= 1.953457 f= 0.13746274915099987 \n
 2: 1011000100111111101101 x= 1.077135 f= 1.916915191775
 3: 0001000101010000111100 x= -0.797076 f= 0.5675938502240001
 4: 1001001000000100001000 x= 0.711127 f= 2.205425389871
