@@ -33,8 +33,12 @@ def interval_din_coeficienti(a, b, c):
     return (-b + m.sqrt(delta)) / 2 * a, (-b - m.sqrt(delta)) / 2 * a
 
 
-def fitness(x, a, b, c):
-    return a * pow(x, 2) + b * x + c
+# def fitness(x, a, b, c):
+#     return a * pow(x, 2) + b * x + c
+
+
+def fitness(x, a, b, c, d=7):
+    return a * pow(x, 3) + b * pow(x, 2) + c * x + d
 
 
 def binary_search(lista, elem):
@@ -76,11 +80,13 @@ if __name__ == '__main__':
     dimensiune_populatie = int(f_in.readline())
     probabilitate_incrucisare = float(f_in.readline())
     probabilitate_mutatie = float(f_in.readline())
+    probabilitate_flip = float(f_in.readline())
     nr_generatii = int(f_in.readline())
 
     # date citite din fisier -----------------------------------------------------------
 
-    a, b = interval_din_coeficienti(x, y, z)
+    # a, b = interval_din_coeficienti(x, y, z)
+    a, b = -4, 4
     lungime = calculeaza_lungime(precizie, a, b)
 
     print("Lungimea cromozomilor: ", lungime)
@@ -88,6 +94,7 @@ if __name__ == '__main__':
     print("Dimensiunea populatiei: ", dimensiune_populatie)
     print("Probabilitate de incrucisare: ", probabilitate_incrucisare)
     print("Probabilitate de mutatie: ", probabilitate_mutatie)
+    print("Probabilitate de flip: ", probabilitate_flip)
 
     populatie = populatie_initiala(dimensiune_populatie, lungime)
     # iau un semafor pentru a afisa doar o data in fisier
@@ -156,6 +163,7 @@ if __name__ == '__main__':
         cromozomi_selectati = []
         indici_incrucisare = []
         indici_mutatie = []
+        indici_flip = []
         for i in range(dimensiune_populatie):
             # iau o variablia u random pentru a vedea in ce interval se incadreaza si ce cromozom selectez pt a merge
             # mai departe
@@ -169,6 +177,11 @@ if __name__ == '__main__':
 
         if afiseaza:
             f_out.write("\nProbabilitati de incrucisare\n")
+
+        for i in range(dimensiune_populatie):
+            u = r.random()
+            if u<probabilitate_flip:
+                indici_flip.append(i)
 
         for i in range(dimensiune_populatie):
             # generez apoi o alta variabila random pentru a vedea daca acel cromozom se incadreaza la incrucisare
@@ -264,9 +277,9 @@ if __name__ == '__main__':
             f_out.write("\nDupa incrucisari si mutatii:\n")
             for i in range(dimensiune_populatie):
                 f_out.write(f"""{i+1}: {''.join(str(x) for x in cromozomi_selectati[i])} x= {codificare_cromozom(cromozomi_selectati[i], a, b)} f= {fitness(codificare_cromozom(cromozomi_selectati[i], a, b), x, y, z)}\n""")
-            f_out.write("\nEvolutia maximului si a average-ului:\n")
+            f_out.write("\nEvolutia maximului, a average-ului si x-ului :\n")
 
-        f_out.write(f"{fitness(codificare_cromozom(cromozom_elitist, a, b), x, y, z)} -- {(suma_fitness+fitness(codificare_cromozom(cromozom_elitist, a, b), x, y, z))/20}\n")
+        f_out.write(f"{fitness(codificare_cromozom(cromozom_elitist, a, b), x, y, z)} -- {(suma_fitness+fitness(codificare_cromozom(cromozom_elitist, a, b), x, y, z))/20} -- {codificare_cromozom(cromozom_elitist, a, b)}\n")
 
         # iau cromozomii din lista si modific cate o gena selectata random
         for i in range(len(indici_mutatie)):
@@ -275,6 +288,19 @@ if __name__ == '__main__':
             print("Cromozomul nemodificat: ", cromozomi_selectati[indici_mutatie[i]])
             cromozomi_selectati[indici_mutatie[i]][u] = 0 if cromozomi_selectati[indici_mutatie[i]][u] == 1 else 1
             print("Cromozomul modificat:   ", cromozomi_selectati[indici_mutatie[i]])
+
+        print("Indicii celor selectati pentru flip: ", indici_flip)
+
+        for i in range(len(indici_flip)):
+            punct_1 = r.randrange(0, lungime)
+            punct_2 = r.randrange(0, lungime)
+            if punct_1 > punct_2:
+                punct_1, punct_2 = punct_2, punct_1
+
+            print("punct 1 : ", punct_1, "  punct 2 : ", punct_2)
+            print("Inainte de flip : ", cromozomi_selectati[indici_flip[i]])
+            cromozomi_selectati[indici_flip[i]][punct_1:punct_2] = cromozomi_selectati[indici_flip[i]][punct_1:punct_2][::-1]
+            print("Inainte de flip : ", cromozomi_selectati[indici_flip[i]])
 
         print(cromozomi_selectati)
         populatie = dc(cromozomi_selectati)
